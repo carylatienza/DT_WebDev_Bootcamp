@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Picker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Poppins", sans-serif;
+            background: white;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+        }
+
+        h2 {
+            text-align: center;
+            color: rgb(227, 10, 64);
+            margin-bottom: 10px;
+        }
+
+        p {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .color-display {
+            width: 100%;
+            height: 200px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            background: #ffffff;
+        }
+
+        .controls {
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            height: 8px;
+            border-radius: 4px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgb(227, 10, 64);
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgb(227, 10, 64);
+            cursor: pointer;
+            border: none;
+        }
+
+        .value-display {
+            min-width: 40px;
+            text-align: right;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .color-info {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+
+        .color-info p {
+            text-align: left;
+            margin: 8px 0;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .color-code {
+            font-weight: 600;
+            color: rgb(227, 10, 64);
+        }
+
+        button {
+            width: 100%;
+            margin-top: 15px;
+            padding: 10px;
+            background: rgb(227, 10, 64);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background: rgb(200, 8, 55);
+        }
+
+        .copied {
+            background: #28a745;
+            text-align: center;
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Color Picker</h2>
+    <p>Adjust the RGB values to create your color</p>
+
+    <div class="color-display" id="colorDisplay"></div>
+
+    <div class="controls">
+        <div class="control-group">
+            <label>Red</label>
+            <div class="slider-container">
+                <input type="range" id="redSlider" min="0" max="255" value="255" oninput="updateColor()">
+                <span class="value-display" id="redValue">255</span>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label>Green</label>
+            <div class="slider-container">
+                <input type="range" id="greenSlider" min="0" max="255" value="255" oninput="updateColor()">
+                <span class="value-display" id="greenValue">255</span>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label>Blue</label>
+            <div class="slider-container">
+                <input type="range" id="blueSlider" min="0" max="255" value="255" oninput="updateColor()">
+                <span class="value-display" id="blueValue">255</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="color-info">
+        <p>RGB: <span class="color-code" id="rgbDisplay">rgb(255, 255, 255)</span></p>
+        <p>HEX: <span class="color-code" id="hexDisplay">#FFFFFF</span></p>
+    </div>
+
+    <button onclick="copyHexCode()">Copy HEX Code</button>
+
+    <div class="copied" id="copiedMessage">Copied to clipboard!</div>
+</div>
+
+<script>
+    function updateColor() {
+        let red = document.getElementById("redSlider").value;
+        let green = document.getElementById("greenSlider").value;
+        let blue = document.getElementById("blueSlider").value;
+
+        document.getElementById("redValue").innerText = red;
+        document.getElementById("greenValue").innerText = green;
+        document.getElementById("blueValue").innerText = blue;
+
+        let rgbColor = `rgb(${red}, ${green}, ${blue})`;
+        document.getElementById("colorDisplay").style.background = rgbColor;
+        document.getElementById("rgbDisplay").innerText = rgbColor;
+
+        let hexColor = rgbToHex(parseInt(red), parseInt(green), parseInt(blue));
+        document.getElementById("hexDisplay").innerText = hexColor;
+    }
+
+    function rgbToHex(r, g, b) {
+        let redHex = r.toString(16).padStart(2, '0');
+        let greenHex = g.toString(16).padStart(2, '0');
+        let blueHex = b.toString(16).padStart(2, '0');
+        return `#${redHex}${greenHex}${blueHex}`.toUpperCase();
+    }
+
+    function copyHexCode() {
+        let hexCode = document.getElementById("hexDisplay").innerText;
+        navigator.clipboard.writeText(hexCode).then(function() {
+            let message = document.getElementById("copiedMessage");
+            message.style.display = "block";
+            setTimeout(function() {
+                message.style.display = "none";
+            }, 2000);
+        });
+    }
+
+    updateColor();
+</script>
+
+</body>
+</html>
