@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator with Closures</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Poppins", sans-serif;
+            background: white;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 350px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+        }
+
+        h2 {
+            text-align: center;
+            color: rgb(227, 10, 64);
+            margin-bottom: 10px;
+        }
+
+        p {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .display {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 4px;
+            text-align: right;
+            margin-bottom: 20px;
+            font-size: 36px;
+            font-weight: 600;
+            color: #333;
+            border: 2px solid #ddd;
+            min-height: 50px;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        button {
+            padding: 20px;
+            background: #f5f5f5;
+            color: #333;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 20px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background: #e5e5e5;
+        }
+
+        .operator {
+            background: rgb(227, 10, 64);
+            color: white;
+        }
+
+        .operator:hover {
+            background: rgb(200, 8, 55);
+        }
+
+        .number {
+            background: white;
+            border: 2px solid #ddd;
+        }
+
+        .number:hover {
+            background: #f9f9f9;
+        }
+
+        .zero {
+            grid-column: span 2;
+        }
+
+        .clear {
+            background: #666;
+            color: white;
+        }
+
+        .clear:hover {
+            background: #555;
+        }
+
+        .equals {
+            background: rgb(227, 10, 64);
+            color: white;
+            grid-column: span 2;
+        }
+
+        .equals:hover {
+            background: rgb(200, 8, 55);
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Calculator</h2>
+    <p>Using closures for state management</p>
+
+    <div class="display" id="display">0</div>
+
+    <div class="button-grid">
+        <button class="clear" onclick="clearDisplay()">C</button>
+        <button class="clear" onclick="deleteDigit()">←</button>
+        <button class="operator" onclick="setOperator('/')">÷</button>
+        <button class="operator" onclick="setOperator('*')">×</button>
+
+        <button class="number" onclick="appendNumber('7')">7</button>
+        <button class="number" onclick="appendNumber('8')">8</button>
+        <button class="number" onclick="appendNumber('9')">9</button>
+        <button class="operator" onclick="setOperator('-')">−</button>
+
+        <button class="number" onclick="appendNumber('4')">4</button>
+        <button class="number" onclick="appendNumber('5')">5</button>
+        <button class="number" onclick="appendNumber('6')">6</button>
+        <button class="operator" onclick="setOperator('+')">+</button>
+
+        <button class="number" onclick="appendNumber('1')">1</button>
+        <button class="number" onclick="appendNumber('2')">2</button>
+        <button class="number" onclick="appendNumber('3')">3</button>
+
+        <button class="number zero" onclick="appendNumber('0')">0</button>
+        <button class="number" onclick="appendNumber('.')">.</button>
+        <button class="equals" onclick="calculate()">=</button>
+    </div>
+</div>
+
+<script>
+    // Calculator using closures to maintain private state
+    function createCalculator() {
+        let currentValue = "0";
+        let previousValue = null;
+        let operator = null;
+        let shouldResetDisplay = false;
+
+        return {
+            appendNumber: function(num) {
+                if (shouldResetDisplay) {
+                    currentValue = num;
+                    shouldResetDisplay = false;
+                } else {
+                    if (currentValue === "0" && num !== ".") {
+                        currentValue = num;
+                    } else {
+                        if (num === "." && currentValue.includes(".")) return currentValue;
+                        currentValue += num;
+                    }
+                }
+                return currentValue;
+            },
+
+            setOperator: function(op) {
+                if (previousValue === null) {
+                    previousValue = parseFloat(currentValue);
+                } else if (operator) {
+                    previousValue = this.performCalculation();
+                }
+                operator = op;
+                shouldResetDisplay = true;
+                return currentValue;
+            },
+
+            performCalculation: function() {
+                let current = parseFloat(currentValue);
+                let result;
+
+                switch(operator) {
+                    case '+':
+                        result = previousValue + current;
+                        break;
+                    case '-':
+                        result = previousValue - current;
+                        break;
+                    case '*':
+                        result = previousValue * current;
+                        break;
+                    case '/':
+                        if (current === 0) {
+                            alert("Cannot divide by zero!");
+                            return previousValue;
+                        }
+                        result = previousValue / current;
+                        break;
+                    default:
+                        return current;
+                }
+                return result;
+            },
+
+            calculate: function() {
+                if (operator === null || previousValue === null) {
+                    return currentValue;
+                }
+                currentValue = String(this.performCalculation());
+                operator = null;
+                previousValue = null;
+                shouldResetDisplay = true;
+                return currentValue;
+            },
+
+            clear: function() {
+                currentValue = "0";
+                previousValue = null;
+                operator = null;
+                shouldResetDisplay = false;
+                return currentValue;
+            },
+
+            deleteDigit: function() {
+                if (currentValue.length > 1) {
+                    currentValue = currentValue.slice(0, -1);
+                } else {
+                    currentValue = "0";
+                }
+                return currentValue;
+            },
+
+            getCurrentValue: function() {
+                return currentValue;
+            }
+        };
+    }
+
+    // Create calculator instance using closure
+    const calc = createCalculator();
+
+    function updateDisplay() {
+        document.getElementById("display").innerText = calc.getCurrentValue();
+    }
+
+    function appendNumber(num) {
+        calc.appendNumber(num);
+        updateDisplay();
+    }
+
+    function setOperator(op) {
+        calc.setOperator(op);
+        updateDisplay();
+    }
+
+    function calculate() {
+        calc.calculate();
+        updateDisplay();
+    }
+
+    function clearDisplay() {
+        calc.clear();
+        updateDisplay();
+    }
+
+    function deleteDigit() {
+        calc.deleteDigit();
+        updateDisplay();
+    }
+</script>
+
+</body>
+</html>
