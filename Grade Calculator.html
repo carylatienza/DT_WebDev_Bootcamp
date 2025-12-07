@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Temperature Converter</title>
+    <title>Grade Calculator</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
@@ -46,17 +46,6 @@
             border: 1px solid #ccc;
             border-radius: 4px;
             font-size: 14px;
-            box-sizing: border-box;
-        }
-
-        select {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 14px;
-            font-family: "Poppins", sans-serif;
-            box-sizing: border-box;
         }
 
         button {
@@ -99,57 +88,47 @@
 <body>
 
 <div class="container">
-    <h2>Temperature Converter</h2>
-    <p>Convert temperatures between Celsius, Fahrenheit, and Kelvin</p>
+    <h2>Grade Calculator</h2>
+    <p>Enter each category score as a percentage (0-100)</p>
 
-    <label>Enter Temperature</label>
-    <input type="number" id="value" placeholder="e.g. 25">
+    <label>Project (25%)</label>
+    <input type="number" id="project" placeholder="Enter grade">
 
-    <label>Convert From</label>
-    <select id="unit">
-        <option value="C">Celsius (°C)</option>
-        <option value="F">Fahrenheit (°F)</option>
-        <option value="K">Kelvin (K)</option>
-    </select>
+    <label>Quiz (15%)</label>
+    <input type="number" id="quiz" placeholder="Enter grade">
 
-    <button onclick="convertTemp()">Convert</button>
+    <label>Midterm (25%)</label>
+    <input type="number" id="midterm" placeholder="Enter grade">
 
-    <div id="result" class="result hidden"></div>
+    <label>Finals (25%)</label>
+    <input type="number" id="finals" placeholder="Enter grade">
+
+    <label>Activities (10%)</label>
+    <input type="number" id="activities" placeholder="Enter grade">
+
+    <button onclick="calculateGrade()">Calculate</button>
+
+    <div id="result" class="result hidden">
+        <p id="avg"></p>
+        <p id="remarks"></p>
+    </div>
 </div>
 
 <script>
-    function convertTemp() {
-        let value = parseFloat(document.getElementById("value").value);
-        let unit = document.getElementById("unit").value;
+    function calculateGrade() {
+        let p = parseFloat(document.getElementById("project").value) || 0;
+        let q = parseFloat(document.getElementById("quiz").value) || 0;
+        let m = parseFloat(document.getElementById("midterm").value) || 0;
+        let f = parseFloat(document.getElementById("finals").value) || 0;
+        let a = parseFloat(document.getElementById("activities").value) || 0;
 
-        if (isNaN(value)) {
-            alert("Please enter a valid number.");
-            return;
-        }
+        let average = (p * 0.25) + (q * 0.15) + (m * 0.25) + (f * 0.25) + (a * 0.10);
 
-        let c, f, k;
-
-        if (unit === "C") {
-            c = value;
-            f = (value * 9/5) + 32;
-            k = value + 273.15;
-        }
-        else if (unit === "F") {
-            c = (value - 32) * 5/9;
-            f = value;
-            k = c + 273.15;
-        }
-        else {
-            c = value - 273.15;
-            f = (c * 9/5) + 32;
-            k = value;
-        }
+        let remarks = average >= 75 ? "Passed" : "Failed";
 
         document.getElementById("result").classList.remove("hidden");
-        document.getElementById("result").innerHTML =
-            `<p>Celsius: ${c.toFixed(2)} °C</p>
-             <p>Fahrenheit: ${f.toFixed(2)} °F</p>
-             <p>Kelvin: ${k.toFixed(2)} K</p>`;
+        document.getElementById("avg").innerText = "Average: " + average.toFixed(2) + "%";
+        document.getElementById("remarks").innerText = "Remarks: " + remarks;
     }
 </script>
 
