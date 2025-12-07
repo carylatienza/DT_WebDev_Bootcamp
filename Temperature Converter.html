@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temperature Converter</title>
+
+    <!-- Google Font: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        body {
+            background: #f7f7f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        .converter-container {
+            background: #ffffff;
+            padding: 30px;
+            width: 360px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 16px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .input-group {
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        label {
+            font-size: 14px;
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #dcdcdc;
+            font-size: 16px;
+        }
+
+        input:focus, select:focus {
+            border-color: rgb(227, 10, 64);
+            outline: none;
+        }
+
+        button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgb(227, 10, 64);
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: 500;
+        }
+
+        button:hover {
+            background: rgb(190, 8, 52);
+        }
+
+        .result-box {
+            margin-top: 20px;
+            padding: 12px;
+            background: #fff2f4;
+            border-radius: 8px;
+            border: 1px solid #ffd6dd;
+            font-weight: 600;
+            font-size: 18px;
+            color: rgb(227, 10, 64);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="converter-container">
+        <h2>Temperature Converter</h2>
+
+        <div class="input-group">
+            <label for="value">Enter Temperature</label>
+            <input type="number" id="value" placeholder="e.g. 25">
+        </div>
+
+        <div class="input-group">
+            <label for="unit">Convert From</label>
+            <select id="unit">
+                <option value="C">Celsius (°C)</option>
+                <option value="F">Fahrenheit (°F)</option>
+                <option value="K">Kelvin (K)</option>
+            </select>
+        </div>
+
+        <button onclick="convertTemp()">Convert</button>
+
+        <div id="result" class="result-box" style="display:none;"></div>
+    </div>
+
+    <script>
+        function convertTemp() {
+            let value = parseFloat(document.getElementById("value").value);
+            let unit = document.getElementById("unit").value;
+            let resultText = "";
+
+            if (isNaN(value)) {
+                alert("Please enter a valid number.");
+                return;
+            }
+
+            let c, f, k;
+
+            if (unit === "C") {
+                c = value;
+                f = (value * 9/5) + 32;
+                k = value + 273.15;
+            }
+            else if (unit === "F") {
+                c = (value - 32) * 5/9;
+                f = value;
+                k = c + 273.15;
+            }
+            else {
+                c = value - 273.15;
+                f = (c * 9/5) + 32;
+                k = value;
+            }
+
+            document.getElementById("result").style.display = "block";
+            document.getElementById("result").innerHTML =
+                `Celsius: ${c.toFixed(2)} °C<br>
+                 Fahrenheit: ${f.toFixed(2)} °F<br>
+                 Kelvin: ${k.toFixed(2)} K`;
+        }
+    </script>
+
+</body>
+</html>
